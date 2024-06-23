@@ -864,7 +864,7 @@ def dashboard(request):
 
         result = maior_indicador.values('id_indicador_id').annotate(count=Count('id_indicador_id')).order_by('-count').first()
 
-        if result:
+        if result and result['id_indicador_id'] != None:
             id_indicador = result['id_indicador_id']
             nome_indicador = Indicador.objects.get(id=id_indicador).nome
             maior_indicador = {
