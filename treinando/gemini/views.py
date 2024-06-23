@@ -196,7 +196,7 @@ def cadastrar_aluno(request):
     if request.method == 'POST':
         email = request.data.get('email', None)
         if email:
-            if Aluno.objects.filter(email=email).exists():
+            if Aluno.objects.filter(email=email).exists() or Coordenador.objects.filter(email=email).exists():
                 return Response({"email": "Este e-mail já está em uso."}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = AlunoSerializer(data=request.data)

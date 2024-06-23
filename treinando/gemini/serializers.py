@@ -19,8 +19,8 @@ class CoordenadorSerializer(serializers.ModelSerializer):
             instituicao=validated_data['instituicao'],
             curso=validated_data['curso'],
             tipoAcesso=validated_data['tipoAcesso'],
+            senha=validated_data['senha']
         )
-        coordenador.set_senha(validated_data['senha'])
         coordenador.save()
         return coordenador
 
@@ -36,8 +36,8 @@ class AlunoSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             instituicao=validated_data['instituicao'],
             curso=validated_data['curso'],
+            senha=validated_data['senha']
         )
-        aluno.set_senha(validated_data['senha'])
         aluno.save()
         return aluno
 
