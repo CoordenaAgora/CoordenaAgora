@@ -21,6 +21,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import cm
 from reportlab.lib import colors
 from django.http import HttpResponse
+import pathlib
 
 
 import os
@@ -978,8 +979,8 @@ def strToDatetime(data):
 
 def header(canvas, doc):
     canvas.saveState()
-    getcwd = os.getcwd()
-    imagem = os.path.join(getcwd,"logo", "logo.png")
+    base_path = os.path.dirname(__file__) 
+    imagem = os.path.join(base_path, '..', 'logo', "logo.png")
     canvas.drawImage(imagem, 250, 700, width=100, height = 100)
     canvas.drawString(258, 710, 'CoordenaAgora')
 
@@ -993,12 +994,18 @@ def gerar_relatorio(request):
     except:
         return Response({"error": "Erro ao obter dados da requisição"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-    teste = Conversa.objects.all()
     count = {}
     for indicador in indicadores:
-        count[indicador['nome']] = Conversa.objects.filter(data_hora__range=[data_inicial, data_final], id_indicador=indicador['id'], id_coordenador=id_coordenador).count()
-
+        if indicador['nome'] == 'Sem classificação':
+            count[indicador['nome']] = Conversa.objects.filter(data_hora__range=[data_inicial, data_final], id_indicador=None, id_coordenador=id_coordenador).count()
+        else:
+            count[indicador['nome']] = Conversa.objects.filter(data_hora__range=[data_inicial, data_final], id_indicador=indicador['id'], id_coordenador=id_coordenador).count()
+            
+    data = [['Nome do indicador', 'Número de ocorrências']]
+    total = 0
+    for indicador in indicadores:
+        data.append([indicador['nome'], count[indicador['nome']]])
+        total += count[indicador['nome']]
     buffer = io.BytesIO()
     documento = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=2*cm, leftMargin=1*cm, topMargin=2*cm, bottomMargin=1*cm)
     frame = Frame(documento.leftMargin, documento.bottomMargin, documento.width, documento.height)
@@ -1006,27 +1013,18 @@ def gerar_relatorio(request):
     documento.addPageTemplates([h])
 
     elementos = [Spacer(1, 50)]
-    elementos.append(Paragraph('Relatório de ' + data_inicial.strftime('%d/%m/%Y') + ' até ' + data_final.strftime('%d/%m/%Y') + ':'))
+    elementos.append(Paragraph('Relatório de indicadores do período de ' + data_inicial.strftime('%d/%m/%Y') + ' até ' + data_final.strftime('%d/%m/%Y') + ':'))
     elementos.append(Spacer(1, 25))
-    data = [['Nome do indicador', 'Quantidade de vezes que apareceu']]
-    total = 0
 
-    count_sem_classificacao = 0
-    if("Sem classificação" in indicadores):
-        count_sem_classificacao = Conversa.objects.filter(data_hora__range=[data_inicial, data_final], id_indicador=None, id_coordenador=id_coordenador).count()
-
-    for indicador in indicadores:
-        if(indicador != "Sem classificação"):
-            data.append([indicador['nome'], count[indicador['nome']]])
-        else:
-            data.append("Sem classificação", count_sem_classificacao)
-        total += count[indicador['nome']]
-
-    data.append(['total', total])
+    data.append(['Total', total])
 
     table = Table(data)
-    table.setStyle(TableStyle([('GRID', (0,0), (-1, -1), 1, colors.black),
-                               ('ALIGN', (-1, 0), (-1, -1), 'RIGHT')]))
+    table.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),  # Destaque do cabeçalho
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),  # Cor do texto do cabeçalho
+        ('ALIGN', (-1, 0), (-1, -1), 'RIGHT')
+    ]))
     elementos.append(table)
     documento.build(elementos)
 
