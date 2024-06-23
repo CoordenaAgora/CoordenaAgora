@@ -45,17 +45,6 @@ def room(request, room_name):
 
 
 GOOGLE_API_KEY = "AIzaSyCLOvpQv7soejToFewHRrAWRaUkUVYQu3g"
-profissionais = [
-    {
-        "nome": "Roberto Medeira",
-        "profissao": "Coordenador do curso de informática",
-        "curso": "Informática",
-        "profissão": "Desenvolvedor"
-    }
-]
-
-
-
 
 #---------------------------------------------INTEGRAÇÃO COM A GEMINI--------------------------------------------#
 
