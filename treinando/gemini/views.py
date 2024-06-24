@@ -743,6 +743,14 @@ def realiza_acao_encaminhamento(conversa_formatada, model, id_aluno, historico_c
                  "Assistência na elaboração de projetos de pesquisa e na busca de fontes de informação." +
                  "Treinamentos em técnicas de busca e uso de bibliografias e citações. " +
                  "Você deve retornar apenas o nome do setor em letras minúsculas. " +
+                 "\nDepartamentos Acadêmicos: Responsáveis pela gestão de cursos e disciplinas, contratação de docentes, organização de atividades acadêmicas e avaliações" +
+                 "\nSetor de Tecnologia da Informação (TI): Gestão dos recursos tecnológicos, suporte técnico, desenvolvimento e manutenção de sistemas e infraestrutura de TI." +
+                 "\nRecursos Humanos (RH):  Gestão de pessoal, recrutamento e seleção, desenvolvimento profissional, administração de benefícios e folha de pagamento." +
+                 "\nComunicação e Marketing: Gestão da comunicação interna e externa, marketing institucional, relacionamento com a mídia e organização de eventos." +
+                 "\nSetor de Infraestrutura e Manutenção: Gestão e manutenção das instalações físicas, segurança, limpeza e conservação dos espaços. " +
+                 "\nAssessoria Jurídica: Consultoria jurídica, representação legal, análise de contratos e suporte em questões legais e regulamentares." +
+                 "\nNúcleo de Apoio Psicopedagógico: Apoio psicopedagógico a estudantes e docentes, promoção da saúde mental e programas de inclusão e acessibilidade." +
+                 "\nSetor de Internacionalização: Coordenação de programas de intercâmbio, parcerias internacionais e apoio a estudantes e professores estrangeiros." +
                  "Você não deve retornar um setor que não seja um desses enviados." )
     print(instrucao)
     setor = model.generate_content(instrucao)
@@ -947,7 +955,7 @@ def classificar_conversa(historico, usuario, id_conversa):
 def finalizar_conversa(conversa):
     if (conversa.id_indicador == None):
         serializer = ConversaSerializer(conversa, data={
-            'status': conversa.status,
+            'status': False,
         }, partial=True)
     else:
         serializer = ConversaSerializer(conversa, data={
