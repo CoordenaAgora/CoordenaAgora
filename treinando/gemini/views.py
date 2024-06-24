@@ -756,7 +756,7 @@ def realiza_acao_encaminhamento(conversa_formatada, model, id_aluno, historico_c
     setor = model.generate_content(instrucao)
 
     for setor_serializer in serializer_setores:
-        if setor.text.strip().lower() == setor_serializer['nome']:
+        if setor.text.strip().lower() == setor_serializer['nome'].lower():
             pessoas_ids = setor_serializer['pessoas']
             pessoas_setor = Pessoa.objects.filter(id__in=pessoas_ids)
             try:
